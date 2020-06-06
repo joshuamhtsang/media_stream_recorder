@@ -55,23 +55,32 @@ if __name__ == '__main__':
     stream_url = 'http://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/uk/sbr_high/ak/bbc_radio_fourfm.m3u8'
 
     while True:
-        hourly_dt = datetime.utcnow()
-        print(hourly_dt)
+        current_dt = datetime.utcnow()
+        print(current_dt)
 
         if args.mode == 'minutely':
             checker = "%S"
             wait_time = 2
+            period = timedelta(minutes=1)
+
+            dt_start_string = current_dt.strftime("%Y%m%d%H%M00")
+            dt_next = current_dt + period
+            dt_next_string = dt_next.strftime("%Y%m%d%H%M00")
         elif args.mode == 'hourly':
             checker = "%M"
             wait_time = 120
+            period = timedelta(hours=1)
 
-        if hourly_dt.strftime(checker) == '00':
-            dt_string = hourly_dt.strftime("%Y%m%d%H0000")
-            print(dt_string)
-            one_hour = timedelta(hours=1)
-            next_hour_dt = hourly_dt + one_hour
-            next_hour_dt_string = next_hour_dt.strftime("%Y%m%d%H0000")
-            filename = 'DET024SkySportNews_gcp_la4_' + dt_string + '_' + next_hour_dt_string
+            dt_start_string = current_dt.strftime("%Y%m%d%H0000")
+            dt_next = current_dt + period
+            dt_next_string = dt_next.strftime("%Y%m%d%H0000")
+        else:
+            print("Invalid mode chosen.")
+            sys.exit(1)
+
+        if current_dt.strftime(checker) == '00':
+            
+            filename = 'DET024SkySportNews_gcp_la4_' + dt_start_string + '_' + dt_next_string
 
             try:
                 x = threading.Thread(target=record_hour, args=(filename, 'mp4', stream_url))

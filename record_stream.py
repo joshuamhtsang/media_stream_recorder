@@ -57,10 +57,14 @@ if __name__ == '__main__':
     while True:
         hourly_dt = datetime.utcnow()
         print(hourly_dt)
+
         if args.mode == 'minutely':
             checker = "%S"
+            wait_time = 2
         elif args.mode == 'hourly':
             checker = "%M"
+            wait_time = 120
+
         if hourly_dt.strftime(checker) == '00':
             dt_string = hourly_dt.strftime("%Y%m%d%H0000")
             print(dt_string)
@@ -77,7 +81,7 @@ if __name__ == '__main__':
                 print("!!!Error!!! Unable to start thread.")
             
             print("Recording : ", filename)
-            time.sleep(120)
+            time.sleep(wait_time)
 
         time.sleep(0.1)
 

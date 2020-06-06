@@ -1,5 +1,5 @@
 import subprocess
-from datetime import datetime
+from datetime import datetime, timedelta
 import threading
 import time
 import sys
@@ -18,7 +18,7 @@ def record_hour(filename, ext):
         '-crf',
         '25',
         '-t',
-        '00:01:00',
+        '01:00:00',
         filename + '.' + ext
     ]
 
@@ -30,7 +30,7 @@ def record_hour(filename, ext):
         '-c:a',
         'copy',
         '-t',
-        '00:01:00',
+        '01:00:00',
         filename + '.' + ext
     ]
 
@@ -51,15 +51,19 @@ if __name__ == '__main__':
         hourly_dt = datetime.utcnow()
         print(hourly_dt)
         if hourly_dt.strftime("%S") == '00':
-            dt_string = hourly_dt.strftime("%Y%m%d%H%M%S")
+            dt_string = hourly_dt.strftime("%Y%m%d%H0000")
             print(dt_string)
+            one_hour = timedelta(hours=1)
+            next_hour_dt = hourly_dt + one_hour
+            next_hour_dt_string = next_hour_dt.strftime("%Y%m%d%H0000")
+            filename = 'DET024SkySportNews_gcp_la4_' + dt_string + '_' + next_hour_dt_string
 
             try:
-                #_thread.start_new_thread(record_hour, 'magic.mp4')
-                x = threading.Thread(target=record_hour, args=(dt_string, 'mp4'))
+                x = threading.Thread(target=record_hour, args=(filename, 'mp4'))
                 x.start()
-            except:
-                print ("Error: unable to start thread")
+            except Exception as e:
+                print(e)
+                print("!!!Error!!! Unable to start thread.")
             
             time.sleep(2)
 

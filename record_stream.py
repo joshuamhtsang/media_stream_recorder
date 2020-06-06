@@ -48,12 +48,20 @@ def record_hour(filename, ext, stream_url):
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-m", "--mode", choices=['minutely', 'hourly'], required=True)
+    args = parser.parse_args()
+
     stream_url = 'http://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/uk/sbr_high/ak/bbc_radio_fourfm.m3u8'
 
     while True:
         hourly_dt = datetime.utcnow()
         print(hourly_dt)
-        if hourly_dt.strftime("%M") == '00':
+        if args.mode == 'minutely':
+            checker = "%S"
+        elif args.mode == 'hourly':
+            checker = "%M"
+        if hourly_dt.strftime(checker) == '00':
             dt_string = hourly_dt.strftime("%Y%m%d%H0000")
             print(dt_string)
             one_hour = timedelta(hours=1)

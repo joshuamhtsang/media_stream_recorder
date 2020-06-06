@@ -18,7 +18,7 @@ def record_hour(filename, ext, stream_url, record_duration):
         '-filter:v',
         'scale=420:-1',
         '-crf',
-        '25',
+        '35',
         '-t',
         record_duration,
         filename + '.' + ext

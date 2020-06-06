@@ -50,7 +50,7 @@ if __name__ == '__main__':
     while True:
         hourly_dt = datetime.utcnow()
         print(hourly_dt)
-        if hourly_dt.strftime("%S") == '00':
+        if hourly_dt.strftime("%M") == '00':
             dt_string = hourly_dt.strftime("%Y%m%d%H0000")
             print(dt_string)
             one_hour = timedelta(hours=1)
@@ -65,7 +65,8 @@ if __name__ == '__main__':
                 print(e)
                 print("!!!Error!!! Unable to start thread.")
             
-            time.sleep(2)
+            print("Recording : ", filename)
+            time.sleep(120)
 
         time.sleep(0.1)
 

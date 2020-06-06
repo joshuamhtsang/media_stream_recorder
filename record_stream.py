@@ -1,16 +1,18 @@
+import argparse
 import subprocess
 from datetime import datetime, timedelta
 import threading
 import time
 import sys
 
-def record_hour(filename, ext):
-    #ffmpeg -i "https://d2od87akyl46nm.cloudfront.net/live/omroepgelderland/kijkradio/index.m3u8" -c:a copy -filter:v scale=420:-1 -crf 35 -t 00:00:05 file.mp4
+def record_hour(filename, ext, stream_url):
+    # Example:
+    # $ ffmpeg -i "https://d2od87akyl46nm.cloudfront.net/live/omroepgelderland/kijkradio/index.m3u8" -c:a copy -filter:v scale=420:-1 -crf 35 -t 00:00:05 file.mp4
     cmd_video = [
         'ffmpeg',
         '-y',
         '-i', 
-        'http://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/uk/sbr_high/ak/bbc_radio_fourfm.m3u8',
+        stream_url,
         '-c:a',
         'copy',
         '-filter:v',
@@ -26,7 +28,7 @@ def record_hour(filename, ext):
         'ffmpeg',
         '-y',
         '-i', 
-        'http://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/uk/sbr_high/ak/bbc_radio_fourfm.m3u8',
+        stream_url,
         '-c:a',
         'copy',
         '-t',
@@ -46,6 +48,7 @@ def record_hour(filename, ext):
 
 
 if __name__ == '__main__':
+    stream_url = 'http://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/uk/sbr_high/ak/bbc_radio_fourfm.m3u8'
 
     while True:
         hourly_dt = datetime.utcnow()
@@ -59,7 +62,7 @@ if __name__ == '__main__':
             filename = 'DET024SkySportNews_gcp_la4_' + dt_string + '_' + next_hour_dt_string
 
             try:
-                x = threading.Thread(target=record_hour, args=(filename, 'mp4'))
+                x = threading.Thread(target=record_hour, args=(filename, 'mp4', stream_url))
                 x.start()
             except Exception as e:
                 print(e)

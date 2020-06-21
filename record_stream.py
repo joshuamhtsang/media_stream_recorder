@@ -5,6 +5,9 @@ import threading
 import time
 import sys
 
+DEFAULT_STREAM_URL = 'http://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/uk/sbr_high/ak/bbc_radio_fourfm.m3u8'
+
+
 def record_hour(filename, ext, stream_url, record_duration):
     # Example:
     # $ ffmpeg -i "https://d2od87akyl46nm.cloudfront.net/live/omroepgelderland/kijkradio/index.m3u8" -c:a copy -filter:v scale=420:-1 -crf 35 -t 00:00:05 file.mp4
@@ -50,9 +53,8 @@ def record_hour(filename, ext, stream_url, record_duration):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-m", "--mode", choices=['minutely', 'hourly'], required=True)
+    parser.add_argument("-s", "--stream_url", default=DEFAULT_STREAM_URL)
     args = parser.parse_args()
-
-    stream_url = 'http://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/uk/sbr_high/ak/bbc_radio_fourfm.m3u8'
 
     while True:
         current_dt = datetime.utcnow()
@@ -85,7 +87,7 @@ if __name__ == '__main__':
             filename = 'DET024SkySportNews_gcp_la4_' + dt_start_string + '_' + dt_next_string
 
             try:
-                x = threading.Thread(target=record_hour, args=(filename, 'mp4', stream_url, record_duration))
+                x = threading.Thread(target=record_hour, args=(filename, 'mp4', args.stream_url, record_duration))
                 x.start()
             except Exception as e:
                 print(e)

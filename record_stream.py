@@ -1,11 +1,12 @@
 import argparse
-import subprocess
+from subprocess import Popen, PIPE
 from datetime import datetime, timedelta
 import threading
 import time
 import sys
 
 DEFAULT_STREAM_URL = 'http://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/uk/sbr_high/ak/bbc_radio_fourfm.m3u8'
+DEFAULT_STREAM_NAME = 'BBCRadio4'
 
 
 def record_hour(filename, ext, stream_url, record_duration):
@@ -47,13 +48,18 @@ def record_hour(filename, ext, stream_url, record_duration):
         print("!!!ERROR!!! UNKNOWN extension!")
         sys.exit(1)
 
-    subprocess.run(cmd)
+    # subprocess.run(cmd)
+    p = Popen(cmd, stdout=PIPE)
+    output = p.communicate()[0]
+    if p.returncode != 0:
+        print("recording/ffmpeg failed %d %s" % (p.returncode, output))
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-m", "--mode", choices=['minutely', 'hourly'], required=True)
     parser.add_argument("-s", "--stream_url", default=DEFAULT_STREAM_URL)
+    parser.add_argument("-c", "--channel_code", default=DEFAULT_STREAM_NAME)
     args = parser.parse_args()
 
     while True:
@@ -83,8 +89,7 @@ if __name__ == '__main__':
             sys.exit(1)
 
         if current_dt.strftime(checker) == '00':
-            
-            filename = 'DET024SkySportNews_gcp_la4_' + dt_start_string + '_' + dt_next_string
+            filename = '{}_{}_{}'.format(args.channel_code, dt_start_string, dt_next_string)
 
             try:
                 x = threading.Thread(target=record_hour, args=(filename, 'mp4', args.stream_url, record_duration))

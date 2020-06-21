@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-msr-bbcradio4
+  labels:
+    channelcode: "bbcradio4"
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      channelcode: "bbcradio4"
+  template:
+    metadata:
+      labels:
+        channelcode: "bbcradio4"
+    spec:
+      containers:
+      - name: recorder
+        image: joshuatsang/media_stream_recorder:latest
+        command: ["python3", "-u", "record_stream.py", "--mode", "minutely"]
+        securityContext:
+          allowPrivilegeEscalation: true
+        imagePullPolicy: Always
+      imagePullSecrets:
+        - name: joshua-dockerhub
+      hostNetwork: true

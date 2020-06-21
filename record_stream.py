@@ -106,6 +106,6 @@ if __name__ == '__main__':
             print("Recording : ", filename)
             time.sleep(wait_time)
 
-        time.sleep(0.1)
+        time.sleep(1.0)
 
 

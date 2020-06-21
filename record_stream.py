@@ -49,8 +49,14 @@ def record_hour(filename, ext, stream_url, record_duration):
         sys.exit(1)
 
     # subprocess.run(cmd)
-    p = Popen(cmd, stdout=PIPE)
-    output = p.communicate()[0]
+    try:
+        p = Popen(cmd, stdout=PIPE)
+        output = p.communicate()[0]
+    except Exception as e:
+        print("Cannot execute command: ", cmd)
+        raise e
+
+    print("return code: ", p.returncode)
     if p.returncode != 0:
         print("recording/ffmpeg failed %d %s" % (p.returncode, output))
 

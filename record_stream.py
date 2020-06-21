@@ -48,7 +48,6 @@ def record_hour(filename, ext, stream_url, record_duration):
         print("!!!ERROR!!! UNKNOWN extension!")
         sys.exit(1)
 
-    # subprocess.run(cmd)
     try:
         p = Popen(cmd, stdout=PIPE)
         output = p.communicate()[0]
